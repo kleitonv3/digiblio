@@ -16,7 +16,7 @@
   "Logout": "Logout",
   "Password": "Senha",
   "Remember me": "Remember me",
-  "Resources": "Resources",
+  "Resources": "Recursos",
   "Send Password Reset Link": "Send Password Reset Link",
   "Welcome Back!": "Welcome Back!",
   "Delete Resource": "Delete Resource",
@@ -465,5 +465,13 @@
   "Remove": "Remove",
   "Uploading": "Uploading",
   "The image could not be loaded.": "The image could not be loaded.",
-  "Name": "Nome"
+  "Name": "Nome",
+  "Book": "Livro",
+  "Books": "Livros",
+  "Copy": "Cópia",
+  "Copies": "Cópias",
+  "Loan Record": "Empréstimo",
+  "Loan Records": "Empréstimos",
+  "User": "Usuário",
+  "Users": "Usuários"
 }
