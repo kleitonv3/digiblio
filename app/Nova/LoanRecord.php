@@ -35,6 +35,16 @@ class LoanRecord extends Resource
         'id',
     ];
 
+    public static function singularLabel()
+    {
+        return __('Empréstimo');
+    }
+
+    public static function Label()
+    {
+        return __('Empréstimos');
+    }
+
     /**
      * Get the fields displayed by the resource.
      *

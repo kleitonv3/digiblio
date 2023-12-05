@@ -38,6 +38,16 @@ class Book extends Resource
         'isbn',
     ];
 
+    public static function singularLabel()
+    {
+        return __('Livro');
+    }
+
+    public static function Label()
+    {
+        return __('Livros');
+    }
+
     /**
      * Get the fields displayed by the resource.
      *

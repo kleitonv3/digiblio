@@ -41,6 +41,16 @@ class Copy extends Resource
         'location',
     ];
 
+    public static function singularLabel()
+    {
+        return __('Cópia');
+    }
+
+    public static function Label()
+    {
+        return __('Cópias');
+    }
+
     /**
      * Get the fields displayed by the resource.
      *
