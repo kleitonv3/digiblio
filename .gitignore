@@ -23,3 +23,9 @@ Homestead.json
 .phpunit.result.cache
 
 auth.json
+
+/.idea
+/.idea/php.xml
+/.idea/phpspec.xml
+/.idea/digiblio.iml
+/.idea/workspace.xml
