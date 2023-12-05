@@ -2,28 +2,30 @@
 
 namespace App\Nova;
 
+use Illuminate\Support\Facades\Auth;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
+use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Password;
-use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class User extends Resource
+class Book extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\User>
+     * @var class-string<\App\Models\Book>
      */
-    public static $model = \App\Models\User::class;
+    public static $model = \App\Models\Book::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -31,7 +33,9 @@ class User extends Resource
      * @var array
      */
     public static $search = [
-        'id', 'name', 'email',
+        'id',
+        'title',
+        'isbn',
     ];
 
     /**
@@ -40,41 +44,33 @@ class User extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function fields(NovaRequest $request): array
+    public function fields(NovaRequest $request)
     {
         return [
             ID::make()->sortable(),
 
-            //Gravatar::make()->maxWidth(50),
+            Text::make('ISBN', 'isbn')
+                ->rules(['required']),
 
-            Text::make(__('Name'), 'name')
+            Text::make('Título', 'title')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
-            Text::make(__('Email'), 'email')
-                ->sortable()
-                ->rules('required', 'email', 'max:254')
-                ->creationRules('unique:users,email')
-                ->updateRules('unique:users,email,{{resourceId}}'),
+            Text::make(__('Autoria'), 'authorship')
+                ->rules('required', 'max:255'),
 
-            Text::make(__('CPF'), 'cpf')
-                ->rules(['required', 'max:11'])
-                ->creationRules(['unique:users,cpf'])
-                ->updateRules(['unique:users,cpf,{{resourceId}}']),
+            Date::make(__('Data de publicação'), 'publication')
+                ->hideFromIndex(),
 
-            Select::make('Cargo', 'role')
-                ->options([
-                    'reader' => 'Leitor',
-                    'func' => 'Funcionário',
-                    'admin' => 'Administrador'
-                ])
-                ->displayUsingLabels()
-                ->showOnIndex(),
+            BelongsTo::make('Criado por', 'registeredBy', User::class)
+                ->readonly()
+                ->hideWhenCreating()
+                ->hideWhenUpdating(),
 
-            Password::make(__('Password'), 'password')
-                ->onlyOnForms()
-                ->creationRules(['required', 'min:4', 'max:50'])
-                ->updateRules(['nullable', 'min:4', 'max:50']),
+            Hidden::make('Criado por', 'registered_by')
+                ->default(function () {
+                    return Auth::id();
+                }),
 
             DateTime::make('Criado em', 'created_at')
                 ->hideWhenCreating()
