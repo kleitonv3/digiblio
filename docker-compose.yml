@@ -1,0 +1,70 @@
+version: '3'
+services:
+
+  #Nginx Service
+  nginx:
+    container_name: digiblio-nginx
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+    volumes:
+      - ./application/:/var/www/html/
+      - ./logs/nginx:/var/log/nginx/
+    networks:
+      - internal
+
+  #PHP Service
+  php:
+    container_name: digiblio-php
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - internal
+    volumes:
+      - ./:/var/www/html
+      - ./logs/php.log:/var/log/fpm-php.www.log
+    restart: unless-stopped
+    expose:
+      - "9000"
+
+  node:
+    container_name: digiblio-node
+    image: node:14.15.4-alpine
+    tty: true
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - internal
+    depends_on:
+      - php
+
+  #MySQL Service
+  mysql:
+    container_name: digiblio-db
+    image: mysql:5.7.22
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: digiblio
+      MYSQL_ROOT_PASSWORD: 23042000
+    volumes:
+      - dbdata:/var/lib/mysql/
+    networks:
+      - internal
+
+#Docker Networks
+networks:
+  internal:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
