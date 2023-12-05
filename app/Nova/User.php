@@ -2,9 +2,10 @@
 
 namespace App\Nova;
 
-use Illuminate\Validation\Rules;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Password;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -46,20 +47,37 @@ class User extends Resource
 
             //Gravatar::make()->maxWidth(50),
 
-            Text::make(__('Name'))
+            Text::make(__('Name'), 'name')
                 ->sortable()
                 ->rules('required', 'max:255'),
 
-            Text::make(__('Email'))
+            Text::make(__('Email'), 'email')
                 ->sortable()
                 ->rules('required', 'email', 'max:254')
                 ->creationRules('unique:users,email')
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
-            Password::make(__('Password'))
+            Text::make(__('CPF'), 'cpf')
+                ->rules(['required', 'max:11'])
+                ->creationRules(['unique:users,cpf'])
+                ->updateRules(['unique:users,cpf,{{resourceId}}']),
+
+            Select::make('Cargo', 'role')
+                ->options([
+                    'reader' => 'Leitor',
+                    'func' => 'Funcionário',
+                    'admin' => 'Administrador'
+                ])
+                ->displayUsingLabels()
+                ->showOnIndex(),
+
+            Password::make(__('Password'), 'password')
                 ->onlyOnForms()
-                ->creationRules('required', Rules\Password::defaults())
-                ->updateRules('nullable', Rules\Password::defaults()),
+                ->creationRules(['required', 'min:4', 'max:50'])
+                ->updateRules(['nullable', 'min:4', 'max:50']),
+
+            DateTime::make('Criado em', 'created_at')
+                ->readonly(),
         ];
     }
 
