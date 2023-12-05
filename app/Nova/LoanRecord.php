@@ -4,24 +4,20 @@ namespace App\Nova;
 
 use Illuminate\Support\Facades\Auth;
 use Laravel\Nova\Fields\BelongsTo;
-use Laravel\Nova\Fields\Boolean;
 use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\Hidden;
 use Laravel\Nova\Fields\ID;
-use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Select;
-use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Copy extends Resource
+class LoanRecord extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
-     * @var class-string<\App\Models\Copy>
+     * @var class-string<\App\Models\LoanRecord>
      */
-    public static $model = \App\Models\Copy::class;
+    public static $model = \App\Models\LoanRecord::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
@@ -37,8 +33,6 @@ class Copy extends Resource
      */
     public static $search = [
         'id',
-        'editor',
-        'location',
     ];
 
     /**
@@ -47,46 +41,27 @@ class Copy extends Resource
      * @param NovaRequest $request
      * @return array
      */
-    public function fields(NovaRequest $request): array
+    public function fields(NovaRequest $request)
     {
         return [
             ID::make()->sortable(),
 
-            BelongsTo::make('Livro', 'book', Book::class)
+            BelongsTo::make('Cópia', 'copy', Copy::class)
                 ->searchable()
-                ->sortable(),
+                ->required(),
 
-            Text::make('Edição', 'edition')
-                ->rules('required', 'max:255'),
+            BelongsTo::make('Para quem foi emprestado', 'borrowedBy', User::class)
+                ->required()
+                ->searchable(),
 
-            Text::make('Editor(a)', 'editor')
-                ->sortable()
-                ->rules('required', 'max:255'),
+            Date::make(__('Data do empréstimo'), 'date_loaned')
+                ->rules('required'),
 
-            Number::make('Páginas', 'pages')
-                ->min(1)
-                ->step(1),
+            Date::make(__('Data de retorno'), 'date_return')
+                ->rules('required'),
 
-            Date::make(__('Data de impressão'), 'print_date')
+            Date::make(__('Data que foi retornado'), 'date_returned')
                 ->hideFromIndex(),
-
-            Select::make('Estado de conservação', 'copy_state')
-                ->options([
-                    'normal' => 'Normal',
-                    'degraded' => 'Degradado',
-                    'irreparable' => 'Irreparável'
-                ])
-                ->displayUsingLabels()
-                ->showOnIndex(),
-
-            Text::make(__('Localização'), 'location')
-                ->rules('nullable', 'max:255'),
-
-            Boolean::make('Emprestado', 'loan_status')
-                ->readonly()
-                ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->default(0),
 
             BelongsTo::make('Criado por', 'registeredBy', User::class)
                 ->readonly()
