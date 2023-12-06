@@ -92,11 +92,10 @@ class Copy extends Resource
             Text::make(__('Localização'), 'location')
                 ->rules('nullable', 'max:255'),
 
-            Boolean::make('Emprestado', 'loan_status')
+            Boolean::make('Está emprestado?', 'is_borrowed')
                 ->readonly()
                 ->hideWhenCreating()
-                ->hideWhenUpdating()
-                ->default(0),
+                ->hideWhenUpdating(),
 
             BelongsTo::make('Criado por', 'registeredBy', User::class)
                 ->readonly()

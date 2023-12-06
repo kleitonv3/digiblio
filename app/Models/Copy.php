@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Copy extends Model
 {
@@ -37,5 +38,15 @@ class Copy extends Model
     public function registeredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'registered_by', 'id');
+    }
+
+    public function loanRecords(): HasMany
+    {
+        return $this->hasMany(LoanRecord::class, 'copy_id', 'id');
+    }
+
+    public function getIsBorrowedAttribute(): bool
+    {
+        return $this->loanRecords()->whereNull('date_returned')->exists();
     }
 }
