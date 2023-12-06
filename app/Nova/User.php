@@ -68,7 +68,7 @@ class User extends Resource
                 ->updateRules('unique:users,email,{{resourceId}}'),
 
             Text::make(__('CPF'), 'cpf')
-                ->rules(['required', 'max:11'])
+                ->rules(['required', 'digits:11', 'numeric'])
                 ->creationRules(['unique:users,cpf'])
                 ->updateRules(['unique:users,cpf,{{resourceId}}']),
 
